@@ -1,9 +1,26 @@
 version: "3.9"
 services:
-  backend:
-    build:
-      context: ./backend
-    ports:
-      - "8000:8000"
+  postgres:
+    image: postgres:17
+    container_name: SD_postgres
+    restart: unless-stopped
+
     environment:
-      - DEBUG=true
+      POSTGRES_DB: ScamDetector
+      POSTGRES_USER: SDadmin
+      POSTGRES_PASSWORD: SDadmin123
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scam_admin -d scam_intelligence"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
